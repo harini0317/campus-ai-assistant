@@ -1,15 +1,13 @@
-import streamlit as st
-import pandas as pd
 import os
+import io
+import pandas as pd
+import streamlit as st
+import matplotlib.pyplot as plt
+
 from chatbot import CollegeBot
 import risk
 
 
-# =========================================================
-# PAGE CONFIGURATION
-# =========================================================
-
-COLLEGE = "V.S.B Engineering College"
 
 st.set_page_config(
     page_title="V.S.B Engineering College | Campus AI",
@@ -19,84 +17,139 @@ st.set_page_config(
 )
 
 
-# =========================================================
-# CUSTOM CSS
-# =========================================================
-
-st.markdown("""
-<style>
+st.markdown(
+    """
+    <style>
 
     /* Main background */
     .stApp {
-        background-color: #f7f9fc;
+        background: #f5f7fb;
     }
 
     /* Sidebar */
     section[data-testid="stSidebar"] {
-        background-color: #0f172a;
+        background: #111827;
     }
 
     section[data-testid="stSidebar"] * {
-        color: white;
+        color: #ffffff !important;
     }
 
     /* Main title */
     .main-title {
-        font-size: 32px;
-        font-weight: 700;
+        font-size: 38px;
+        font-weight: 800;
+        color: #111827;
         margin-bottom: 5px;
     }
 
-    .sub-title {
-        color: #64748b;
-        font-size: 15px;
+    .subtitle {
+        font-size: 17px;
+        color: #4b5563;
         margin-bottom: 25px;
     }
 
-    /* Welcome card */
-    .welcome-card {
-        background-color: white;
-        padding: 22px;
-        border-radius: 14px;
-        border: 1px solid #e2e8f0;
+    /* Cards */
+    .card {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         margin-bottom: 20px;
     }
 
-    /* Info cards */
-    .info-card {
-        background-color: white;
-        padding: 20px;
+    .card-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .card-text {
+        font-size: 15px;
+        color: #374151;
+        line-height: 1.6;
+    }
+
+    /* Chatbot messages */
+    [data-testid="stChatMessage"] {
+        background: #ffffff !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 14px !important;
+        margin-bottom: 12px !important;
+    }
+
+    /* IMPORTANT: chatbot text visibility */
+    [data-testid="stChatMessage"] p,
+    [data-testid="stChatMessage"] div,
+    [data-testid="stChatMessage"] span,
+    [data-testid="stChatMessage"] li,
+    [data-testid="stChatMessage"] strong {
+        color: #111827 !important;
+    }
+
+    [data-testid="stChatMessage"] ul,
+    [data-testid="stChatMessage"] ol {
+        color: #111827 !important;
+    }
+
+    /* Chat input */
+    [data-testid="stChatInput"] textarea {
+        color: #111827 !important;
+        background: #ffffff !important;
+    }
+
+    [data-testid="stChatInput"] textarea::placeholder {
+        color: #6b7280 !important;
+    }
+
+    /* Normal text */
+    .stMarkdown,
+    .stText {
+        color: #111827;
+    }
+
+    /* Metric */
+    [data-testid="stMetric"] {
+        background: #ffffff;
+        padding: 15px;
         border-radius: 14px;
-        border: 1px solid #e2e8f0;
-        min-height: 130px;
+        border: 1px solid #e5e7eb;
     }
 
-    .info-title {
-        font-size: 16px;
-        font-weight: 600;
+    [data-testid="stMetricLabel"] {
+        color: #4b5563 !important;
     }
 
-    .info-text {
-        color: #64748b;
-        font-size: 14px;
+    [data-testid="stMetricValue"] {
+        color: #111827 !important;
     }
 
     /* Footer */
     .footer {
         text-align: center;
-        color: #64748b;
-        font-size: 13px;
+        padding: 25px;
         margin-top: 40px;
-        padding: 20px;
+        color: #6b7280;
+        font-size: 14px;
+        border-top: 1px solid #e5e7eb;
     }
 
-</style>
-""", unsafe_allow_html=True)
+    /* Quick question buttons */
+    div.stButton > button {
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 
-# =========================================================
-# FUNCTIONS
-# =========================================================
+COLLEGE = "V.S.B Engineering College"
+
 
 def get_bot():
     return CollegeBot()
@@ -107,18 +160,36 @@ def get_risk():
     return risk.load()
 
 
-# =========================================================
-# SIDEBAR
-# =========================================================
+def load_sample_data():
+    path = os.path.join("data", "sample_class.csv")
+
+    if os.path.exists(path):
+        return pd.read_csv(path)
+
+    return pd.DataFrame()
+
+
+def create_download_file(df):
+    output = io.BytesIO()
+
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+        df.to_excel(writer, index=False, sheet_name="Risk Report")
+
+    output.seek(0)
+    return output
+
+
 
 with st.sidebar:
 
     st.markdown(
         """
         <div style="text-align:center; padding:10px;">
-            <div style="font-size:48px;">🎓</div>
-            <h2 style="margin-bottom:0;">Campus AI</h2>
-            <p style="color:#cbd5e1;">Smart College Assistant</p>
+            <div style="font-size:45px;">🎓</div>
+            <h2 style="margin:0;">Campus AI</h2>
+            <p style="color:#d1d5db !important;">
+                Smart College Assistant
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -127,7 +198,7 @@ with st.sidebar:
     st.divider()
 
     page = st.radio(
-        "NAVIGATION",
+        "Navigation",
         [
             "💬 Campus Chatbot",
             "🚨 Student Risk Dashboard",
@@ -139,23 +210,19 @@ with st.sidebar:
     st.divider()
 
     st.markdown(
-        f"""
-        <div style="text-align:center;">
-            <b>{COLLEGE}</b><br>
-            <span style="color:#cbd5e1;">
-            AI & DS Final Year Project
-            </span>
+        """
+        <div style="text-align:center; color:#d1d5db;">
+            <small>
+                V.S.B Engineering College<br>
+                AI & DS Final Year Project
+            </small>
         </div>
         """,
         unsafe_allow_html=True
     )
 
 
-# =========================================================
-# CHATBOT
-# =========================================================
-
-if page.startswith("💬"):
+if page == "💬 Campus Chatbot":
 
     st.markdown(
         '<div class="main-title">💬 College Enquiry Assistant</div>',
@@ -163,9 +230,9 @@ if page.startswith("💬"):
     )
 
     st.markdown(
-        '<div class="sub-title">'
+        '<div class="subtitle">'
         'Ask questions about admissions, courses, fees, hostel, '
-        'attendance, exams and placements.'
+        'attendance, exams, placements and more.'
         '</div>',
         unsafe_allow_html=True
     )
@@ -173,14 +240,13 @@ if page.startswith("💬"):
     # Welcome card
     st.markdown(
         """
-        <div class="welcome-card">
-            <h3>👋 Vanakkam!</h3>
-            <p>
-            Welcome to the V.S.B Engineering College AI Enquiry Assistant.
-            </p>
-            <p style="color:#64748b;">
-            You can ask in English or Tanglish.
-            </p>
+        <div class="card">
+            <div class="card-title">👋 Vanakkam!</div>
+            <div class="card-text">
+                Welcome to the V.S.B Engineering College AI Enquiry Assistant.
+                <br><br>
+                You can ask questions in <b>English or Tanglish</b>.
+            </div>
         </div>
         """,
         unsafe_allow_html=True
@@ -191,121 +257,161 @@ if page.startswith("💬"):
 
     q1, q2, q3, q4 = st.columns(4)
 
+    if "msgs" not in st.session_state:
+        st.session_state.msgs = []
+
     with q1:
-        if st.button("🎓 Courses", use_container_width=True):
-            st.session_state.quick_question = "VSB la enna courses iruku?"
+        if st.button("📚 Courses", use_container_width=True):
+            st.session_state.msgs.append(
+                {
+                    "role": "user",
+                    "content": "VSB la enna courses iruku?"
+                }
+            )
 
     with q2:
         if st.button("💰 Fees", use_container_width=True):
-            st.session_state.quick_question = "VSB la fees evlo?"
+            st.session_state.msgs.append(
+                {
+                    "role": "user",
+                    "content": "VSB la fees evlo?"
+                }
+            )
 
     with q3:
         if st.button("🏠 Hostel", use_container_width=True):
-            st.session_state.quick_question = "hostel facility iruka?"
+            st.session_state.msgs.append(
+                {
+                    "role": "user",
+                    "content": "VSB la hostel facility iruka?"
+                }
+            )
 
     with q4:
         if st.button("💼 Placements", use_container_width=True):
-            st.session_state.quick_question = "VSB placement la enna companies varanga?"
+            st.session_state.msgs.append(
+                {
+                    "role": "user",
+                    "content": "VSB placement la enna companies varanga?"
+                }
+            )
 
     st.divider()
 
-    # Chat history
-    if "msgs" not in st.session_state:
-
-        st.session_state.msgs = [
-            (
-                "assistant",
-                "Vanakkam! 👋 College pathi enna therinjukanum?",
-                None
-            )
-        ]
-
     # Clear chat
-    col1, col2 = st.columns([6, 1])
+    if st.button("🗑️ Clear Chat"):
+        st.session_state.msgs = []
+        st.rerun()
 
-    with col2:
+    # Display previous messages
+    for message in st.session_state.msgs:
 
-        if st.button("🗑️ Clear", use_container_width=True):
+        with st.chat_message(message["role"]):
 
-            st.session_state.msgs = [
-                (
-                    "assistant",
-                    "Vanakkam! 👋 College pathi enna therinjukanum?",
-                    None
-                )
-            ]
-
-            st.session_state.pop(
-                "quick_question",
-                None
+            st.markdown(
+                message["content"]
             )
 
-            st.rerun()
-
-    # Display messages
-    for role, text, src in st.session_state.msgs:
-
-        with st.chat_message(role):
-
-            st.write(text)
-
-            if src:
+            if "source" in message:
                 st.caption(
-                    f"📄 Source: {src}"
+                    f"📄 Source: {message['source']}  |  "
+                    f"Confidence: {message.get('confidence', 'N/A')}"
                 )
 
-    # Input
-    q = st.chat_input(
-        "Type your question..."
+    # Chat input
+    user_question = st.chat_input(
+        "Ask V.S.B Engineering College something..."
     )
 
-    # Quick question handling
-    if "quick_question" in st.session_state:
-
-        q = st.session_state.pop(
-            "quick_question"
-        )
-
-    if q:
+    if user_question:
 
         st.session_state.msgs.append(
-            (
-                "user",
-                q,
-                None
-            )
+            {
+                "role": "user",
+                "content": user_question
+            }
         )
+
+        with st.chat_message("user"):
+            st.markdown(user_question)
 
         bot = get_bot()
 
-        res = bot.ask(q)
+        try:
+            result = bot.ask(user_question)
 
-        src = None
+        except Exception:
+            try:
+                result = bot.get_answer(user_question)
+            except Exception as e:
+                result = (
+                    f"Sorry, chatbot error occurred: {str(e)}"
+                )
 
-        if res["hits"]:
+        # Handle different possible response formats
+        answer = ""
+        source = ""
+        confidence = ""
 
-            src = (
-                f"{res['hits'][0][1]}  |  "
-                f"confidence "
-                f"{res['confidence'] * 100:.0f}%"
+        if isinstance(result, dict):
+
+            answer = result.get(
+                "answer",
+                result.get("response", "")
             )
+
+            source = result.get(
+                "source",
+                result.get("file", "")
+            )
+
+            confidence = result.get(
+                "confidence",
+                ""
+            )
+
+        elif isinstance(result, tuple):
+
+            if len(result) >= 1:
+                answer = result[0]
+
+            if len(result) >= 2:
+                source = result[1]
+
+            if len(result) >= 3:
+                confidence = result[2]
+
+        else:
+            answer = str(result)
+
+        with st.chat_message("assistant"):
+
+            st.markdown(answer)
+
+            if source or confidence:
+
+                source_text = "📄"
+
+                if source:
+                    source_text += f" Source: {source}"
+
+                if confidence:
+                    source_text += f" | Confidence: {confidence}"
+
+                st.caption(source_text)
 
         st.session_state.msgs.append(
-            (
-                "assistant",
-                res["answer"],
-                src
-            )
+            {
+                "role": "assistant",
+                "content": answer,
+                "source": source,
+                "confidence": confidence
+            }
         )
 
-        st.rerun()
 
 
-# =========================================================
-# STUDENT RISK DASHBOARD
-# =========================================================
-
-elif page.startswith("🚨"):
+elif page == "🚨 Student Risk Dashboard":
 
     st.markdown(
         '<div class="main-title">🚨 Student Risk Dashboard</div>',
@@ -313,160 +419,220 @@ elif page.startswith("🚨"):
     )
 
     st.markdown(
-        '<div class="sub-title">'
-        'Identify students who may need early mentor intervention.'
+        '<div class="subtitle">'
+        'Identify students who may require academic mentoring.'
         '</div>',
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        """
-        <div class="welcome-card">
-            <h3>📋 Upload Student Data</h3>
-            <p>
-            Upload a CSV file containing attendance, study hours,
-            previous marks, assignments and other student factors.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
+    uploaded_file = st.file_uploader(
+        "Upload Student CSV",
+        type=["csv"]
     )
 
-    f = st.file_uploader(
-        "Upload class CSV",
-        type="csv"
-    )
+    if uploaded_file is not None:
 
-    if (
-        f is None
-        and os.path.exists(
-            "data/sample_class.csv"
+        df = pd.read_csv(uploaded_file)
+
+    else:
+
+        df = load_sample_data()
+
+        st.info(
+            "Showing sample student data. "
+            "Upload your own CSV to analyse students."
         )
-    ):
 
-        if st.checkbox(
-            "Use sample class data",
-            value=True
-        ):
+    if df.empty:
 
-            f = "data/sample_class.csv"
+        st.warning("No student data available.")
 
-    if f is not None:
+    else:
 
-        df = pd.read_csv(f)
+        # Try risk model
+        risk_df = df.copy()
 
-        missing = [
-            c
-            for c in risk.FEATURES
-            if c not in df.columns
-        ]
+        try:
 
-        if missing:
+            model = get_risk()
 
-            st.error(
-                f"Missing columns: {missing}"
+            if model is not None:
+
+                # Common prediction formats
+                if hasattr(model, "predict"):
+
+                    numeric_df = risk_df.select_dtypes(
+                        include=["number"]
+                    )
+
+                    if not numeric_df.empty:
+
+                        predictions = model.predict(
+                            numeric_df
+                        )
+
+                        risk_df["Risk"] = predictions
+
+        except Exception:
+            pass
+
+        # Detect existing risk column
+        risk_column = None
+
+        for col in risk_df.columns:
+
+            if col.lower() in [
+                "risk",
+                "risk_level",
+                "risk level"
+            ]:
+                risk_column = col
+                break
+
+        if risk_column is not None:
+
+            risk_values = (
+                risk_df[risk_column]
+                .astype(str)
+                .str.lower()
             )
+
+            high_count = risk_values.str.contains(
+                "high"
+            ).sum()
+
+            medium_count = risk_values.str.contains(
+                "medium"
+            ).sum()
+
+            low_count = risk_values.str.contains(
+                "low"
+            ).sum()
 
         else:
 
-            if "name" not in df.columns:
+            high_count = 0
+            medium_count = 0
+            low_count = len(risk_df)
 
-                df["name"] = [
-                    f"Student {i + 1}"
-                    for i in range(len(df))
-                ]
+        # Metrics
+        c1, c2, c3, c4 = st.columns(4)
 
-            out = risk.analyse(
-                df,
-                get_risk()
-            )
-
-            st.markdown("### 📊 Risk Summary")
-
-            a, b, c, d = st.columns(4)
-
-            a.metric(
+        with c1:
+            st.metric(
                 "👥 Total Students",
-                len(out)
+                len(risk_df)
             )
 
-            b.metric(
+        with c2:
+            st.metric(
                 "🔴 High Risk",
-                int(
-                    (out.risk_level == "High").sum()
-                )
+                high_count
             )
 
-            c.metric(
+        with c3:
+            st.metric(
                 "🟠 Medium Risk",
-                int(
-                    (out.risk_level == "Medium").sum()
-                )
+                medium_count
             )
 
-            d.metric(
+        with c4:
+            st.metric(
                 "🟢 Low Risk",
-                int(
-                    (out.risk_level == "Low").sum()
-                )
+                low_count
             )
 
-            st.divider()
+        st.divider()
 
-            level = st.multiselect(
-                "Filter Risk Level",
-                [
-                    "High",
-                    "Medium",
-                    "Low"
-                ],
-                default=[
-                    "High",
-                    "Medium"
-                ]
-            )
+        # Filter
+        if risk_column:
 
-            shown = out[
-                out.risk_level.isin(level)
+            risk_options = [
+                "All",
+                "High",
+                "Medium",
+                "Low"
             ]
 
-            st.dataframe(
-                shown[
-                    [
-                        "name",
-                        "fail_risk_%",
-                        "risk_level",
-                        "main_reasons",
-                        "suggested_action"
-                    ]
-                ],
-                use_container_width=True,
-                hide_index=True
+            selected_risk = st.selectbox(
+                "Filter by Risk Level",
+                risk_options
+            )
+
+            if selected_risk != "All":
+
+                filtered_df = risk_df[
+                    risk_df[risk_column]
+                    .astype(str)
+                    .str.lower()
+                    .str.contains(
+                        selected_risk.lower()
+                    )
+                ]
+
+            else:
+
+                filtered_df = risk_df
+
+        else:
+
+            filtered_df = risk_df
+
+        st.markdown("### 📋 Student Data")
+
+        st.dataframe(
+            filtered_df,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        # Download
+        try:
+
+            excel_file = create_download_file(
+                filtered_df
             )
 
             st.download_button(
                 "⬇️ Download Mentor Report",
-                shown.to_csv(index=False),
-                "mentor_report.csv",
-                use_container_width=True
+                data=excel_file,
+                file_name="student_risk_report.xlsx",
+                mime=(
+                    "application/vnd.openxmlformats-officedocument."
+                    "spreadsheetml.sheet"
+                )
             )
 
-            st.markdown(
-                "### 📈 Student Risk Distribution"
+        except Exception:
+
+            csv_data = filtered_df.to_csv(
+                index=False
             )
 
-            st.bar_chart(
-                out.set_index("name")[
-                    "fail_risk_%"
-                ].head(15)
+            st.download_button(
+                "⬇️ Download Mentor Report",
+                data=csv_data,
+                file_name="student_risk_report.csv",
+                mime="text/csv"
             )
 
+        # Risk chart
+        if risk_column:
 
-# =========================================================
-# ANALYTICS
-# =========================================================
+            st.markdown("### 📊 Risk Distribution")
 
-elif page.startswith("📊"):
+            chart_data = (
+                risk_df[risk_column]
+                .astype(str)
+                .value_counts()
+            )
+
+            st.bar_chart(chart_data)
+
+
+
+
+elif page == "📊 Analytics":
 
     st.markdown(
         '<div class="main-title">📊 Analytics</div>',
@@ -474,108 +640,122 @@ elif page.startswith("📊"):
     )
 
     st.markdown(
-        '<div class="sub-title">'
-        'Model performance and chatbot usage analytics.'
+        '<div class="subtitle">'
+        'Project performance and chatbot usage analytics.'
         '</div>',
         unsafe_allow_html=True
     )
 
-    t1, t2 = st.tabs(
-        [
-            "🤖 Model Comparison",
-            "💬 Chatbot Usage"
-        ]
+    # Model comparison
+    st.markdown(
+        """
+        <div class="card">
+            <div class="card-title">🤖 AI Model</div>
+            <div class="card-text">
+                Campus AI uses machine learning and retrieval-based
+                techniques to support college enquiries and identify
+                students who may need academic attention.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
-    with t1:
+    st.markdown("### 🧠 Risk Prediction")
 
-        bd = get_risk()
+    try:
 
-        st.markdown(
-            f"""
-            <div class="welcome-card">
-                <h3>🏆 Best Model</h3>
-                <p>
-                <b>{bd['name']}</b>
-                </p>
-                <p style="color:#64748b;">
-                Selected based on ROC-AUC performance.
-                </p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        model = get_risk()
 
-        st.dataframe(
-            bd["table"],
-            hide_index=True,
-            use_container_width=True
-        )
+        if model is not None:
 
-        if bd["importance"] is not None:
-
-            st.markdown(
-                "### 📌 Feature Importance"
+            st.success(
+                "Risk prediction model loaded successfully."
             )
 
-            st.bar_chart(
-                pd.Series(
-                    bd["importance"],
-                    index=risk.FEATURES
+            if hasattr(model, "feature_importances_"):
+
+                importance = model.feature_importances_
+
+                st.markdown(
+                    "#### Feature Importance"
                 )
-            )
 
-    with t2:
+                feature_names = [
+                    f"Feature {i + 1}"
+                    for i in range(len(importance))
+                ]
 
-        if os.path.exists(
-            "logs/queries.csv"
-        ):
-
-            lg = pd.read_csv(
-                "logs/queries.csv"
-            )
-
-            a, b = st.columns(2)
-
-            a.metric(
-                "💬 Questions Asked",
-                len(lg)
-            )
-
-            b.metric(
-                "❓ Unanswered",
-                int(
-                    (lg.source == "none").sum()
+                importance_df = pd.DataFrame(
+                    {
+                        "Feature": feature_names,
+                        "Importance": importance
+                    }
+                ).sort_values(
+                    "Importance",
+                    ascending=False
                 )
-            )
 
-            st.markdown(
-                "### 📚 Most Asked Topics"
-            )
-
-            st.bar_chart(
-                lg.source.value_counts()
-            )
-
-            st.dataframe(
-                lg.tail(20),
-                hide_index=True,
-                use_container_width=True
-            )
+                st.bar_chart(
+                    importance_df.set_index(
+                        "Feature"
+                    )
+                )
 
         else:
 
-            st.info(
-                "No questions yet. "
-                "Ask something in the chatbot first."
+            st.warning(
+                "Risk model could not be loaded."
             )
 
+    except Exception as e:
 
-# =========================================================
-# ABOUT
-# =========================================================
+        st.warning(
+            f"Risk model information unavailable: {e}"
+        )
 
-else:
+    st.divider()
+
+    # Chatbot logs
+    st.markdown("### 💬 Chatbot Usage")
+
+    log_path = os.path.join(
+        "logs",
+        "queries.csv"
+    )
+
+    if os.path.exists(log_path):
+
+        try:
+
+            logs_df = pd.read_csv(log_path)
+
+            st.metric(
+                "Total Questions",
+                len(logs_df)
+            )
+
+            st.dataframe(
+                logs_df,
+                use_container_width=True,
+                hide_index=True
+            )
+
+        except Exception:
+
+            st.info(
+                "Chatbot log data is not available yet."
+            )
+
+    else:
+
+        st.info(
+            "No chatbot questions have been logged yet."
+        )
+
+
+
+elif page == "ℹ️ About":
 
     st.markdown(
         '<div class="main-title">ℹ️ About Campus AI</div>',
@@ -583,96 +763,92 @@ else:
     )
 
     st.markdown(
-        '<div class="sub-title">'
-        'AI-powered college information and student support system.'
-        '</div>',
+        """
+        <div class="card">
+
+            <div class="card-title">
+                🎓 Campus AI Assistant
+            </div>
+
+            <div class="card-text">
+
+                <b>Campus AI Assistant</b> is an AI-powered
+                college support platform developed as an
+                AI & Data Science final-year project.
+
+                <br><br>
+
+                The system provides a college enquiry chatbot
+                that can answer questions about:
+
+                <ul>
+                    <li>📚 Courses and Departments</li>
+                    <li>💰 Fees and Scholarships</li>
+                    <li>📝 Admissions</li>
+                    <li>📅 Attendance and Examinations</li>
+                    <li>🏠 Hostel and Transport</li>
+                    <li>💼 Placements</li>
+                    <li>🎯 College Events</li>
+                </ul>
+
+            </div>
+
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
-    c1, c2 = st.columns(2)
+    st.markdown(
+        """
+        <div class="card">
 
-    with c1:
-
-        st.markdown(
-            """
-            <div class="info-card">
-                <div class="info-title">
-                    💬 RAG Enquiry Chatbot
-                </div>
-                <br>
-                <div class="info-text">
-                    Answers college-related questions using
-                    a college-specific knowledge base with
-                    TF-IDF retrieval and source-based responses.
-                </div>
+            <div class="card-title">
+                🚨 Student Early Warning System
             </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-    with c2:
+            <div class="card-text">
 
-        st.markdown(
-            """
-            <div class="info-card">
-                <div class="info-title">
-                    🚨 Early Warning System
-                </div>
-                <br>
-                <div class="info-text">
-                    Analyses student academic factors and
-                    identifies students who may need
-                    mentor intervention.
-                </div>
+                The project also includes a student risk
+                dashboard that can help identify students
+                who may require academic mentoring.
+
+                Student information can be analysed using
+                attendance, academic and other available
+                features.
+
             </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-    st.markdown("<br>", unsafe_allow_html=True)
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    c3, c4 = st.columns(2)
+    st.markdown(
+        """
+        <div class="card">
 
-    with c3:
-
-        st.markdown(
-            """
-            <div class="info-card">
-                <div class="info-title">
-                    📊 Analytics
-                </div>
-                <br>
-                <div class="info-text">
-                    Provides model comparison, feature
-                    importance and chatbot usage statistics.
-                </div>
+            <div class="card-title">
+                🧠 Technologies
             </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-    with c4:
+            <div class="card-text">
 
-        st.markdown(
-            """
-            <div class="info-card">
-                <div class="info-title">
-                    🎓 Project
-                </div>
-                <br>
-                <div class="info-text">
-                    V.S.B Engineering College<br>
-                    AI & DS Final Year Project
-                </div>
+                <b>Frontend:</b> Streamlit<br>
+                <b>Programming:</b> Python<br>
+                <b>AI:</b> TF-IDF / Retrieval-Based NLP<br>
+                <b>Machine Learning:</b> Scikit-learn<br>
+                <b>Data:</b> Pandas<br>
+                <b>Model Storage:</b> Joblib
+
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
-# =========================================================
-# FOOTER
-# =========================================================
+
 
 st.markdown(
     """
