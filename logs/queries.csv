@@ -1,0 +1,53 @@
+time,question,score,source
+2026-10-05T14:08:53,What are the admission details?,0.221,admissions.txt
+2026-10-05T14:09:12,college admission pathi sollu,0.295,admissions.txt
+2026-10-05T14:11:43,college fees pathi sollu,0.318,fees.txt
+2026-10-05T14:27:20,What courses does VSB Engineering College offer?,0.174,fees.txt
+2026-10-05T14:31:56,What courses does VSB Engineering College offer?,0.174,fees.txt
+2026-10-05T14:32:09,VSB la enna courses iruku?,0.114,exams_attendance.txt
+2026-10-05T14:35:34,hey,0.0,none
+2026-10-05T14:35:41,harini,0.062,placements_events.txt
+2026-10-05T14:35:55,which department,0.353,exams_attendance.txt
+2026-10-05T14:36:22,i want EEE final year student detail,0.175,placements_events.txt
+2026-10-05T14:36:37,student details,0.276,hostel_transport.txt
+2026-10-05T14:39:51,What courses does VSB Engineering College offer?,0.796,admissions.txt
+2026-10-05T14:41:29,VSB la enna courses iruku?,0.963,admissions.txt
+2026-10-05T14:44:48,VSB la enna courses iruku?,1.0,admissions.txt
+2026-10-05T14:46:17,VSB la enna courses iruku?,1.0,admissions.txt
+2026-10-05T14:47:26,VSB la enna courses iruku?,0.321,admissions.txt
+2026-10-05T14:47:43,"Menu
+
+💬 Campus Chatbot
+
+🚨 Student Risk Dashboard
+
+📊 Analytics
+
+ℹ️ About
+
+V.S.B Engineering College AI & DS Final Year Project
+💬 V.S.B Engineering College - Enquiry Assistant
+
+Ask about admission, fees, hostel, attendance, exams, placements... (English / Tanglish)
+
+Vanakkam! 👋 College pathi enna therinjukanum?
+
+VSB la enna courses iruku?
+
+Merit scholarships are available.
+
+    Online Registration Students can create an account on the VSB Admissions Portal and fill in the application form.
+
+📄 Source: admissions.txt | confidence 90%",0.602,fees.txt
+2026-10-05T14:48:28,VSB la enna courses iruku?,0.321,admissions.txt
+2026-10-05T14:52:06,hey,0.019,none
+2026-10-05T14:52:14,vanakam,0.043,none
+2026-10-05T14:52:22,ai and ds,0.121,admissions.txt
+2026-10-05T14:52:33,VSB la enna courses iruku?,1.0,admissions.txt
+2026-10-05T14:52:46,VSB la enna courses iruku?,1.0,admissions.txt
+2026-10-05T14:53:08,VSB la fees evlo?,0.733,fees.txt
+2026-10-05T14:53:38,attendance evlo venum?,0.153,fees.txt
+2026-10-05T15:13:23.012911,VSB la fees evlo?,fees.txt,1.0
+2026-10-05T15:13:54.137366,attendance evlo venum?,exams_attendance.txt,1.0
+2026-10-05T15:14:33.497453,hostel facility iruka?,hostel_transport.txt,1.0
+2026-10-05T15:14:53.799962,VSB placement la enna companies varanga?,placements_events.txt,1.0
