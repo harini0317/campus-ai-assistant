@@ -79,6 +79,130 @@ section[data-testid="stSidebar"] * {
     font-size: 14px;
     padding-top: 25px;
 }
+
+.about-title {
+    font-size: 36px;
+    font-weight: 800;
+    color: #111827 !important;
+    margin-bottom: 18px;
+}
+
+.about-intro {
+    background-color: #dbeafe;
+    color: #1e3a8a !important;
+    padding: 22px 26px;
+    border-radius: 14px;
+    font-size: 17px;
+    line-height: 1.7;
+    border: 1px solid #bfdbfe;
+    margin-bottom: 28px;
+}
+
+.about-intro b {
+    color: #1e3a8a !important;
+}
+
+.about-section {
+    background-color: white;
+    padding: 24px 28px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.about-heading {
+    font-size: 25px;
+    font-weight: 750;
+    color: #111827 !important;
+    margin-bottom: 18px;
+}
+
+.about-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.about-list div {
+    color: #374151 !important;
+    font-size: 16px;
+    padding: 10px 12px;
+    background-color: #f9fafb;
+    border-radius: 9px;
+}
+
+.about-list b {
+    color: #111827 !important;
+}
+
+.about-text {
+    color: #374151 !important;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.about-text b {
+    color: #111827 !important;
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.tech-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.tech-icon {
+    font-size: 27px;
+}
+
+.tech-name {
+    color: #6b7280 !important;
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.tech-value {
+    color: #111827 !important;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.about-footer {
+    text-align: center;
+    color: #6b7280 !important;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 20px 0 10px 0;
+}
+
+.about-footer b {
+    color: #374151 !important;
+}
+
+@media (max-width: 768px) {
+    .about-list {
+        grid-template-columns: 1fr;
+    }
+
+    .tech-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-title {
+        font-size: 30px;
+    }
+}
 </style>
 """,
     unsafe_allow_html=True
@@ -768,58 +892,55 @@ elif page == "📊 Analytics":
 elif page == "ℹ️ About":
 
     st.markdown(
-        '<div class="main-title">ℹ️ About Campus AI</div>',
+        """<div class="about-title">ℹ️ About Campus AI</div>""",
         unsafe_allow_html=True
     )
 
-    st.info(
-        "🎓 Campus AI Assistant is an AI-powered "
-        "college support platform developed as an "
-        "AI & Data Science final-year project."
+    st.markdown(
+        """<div class="about-intro">🎓 <b>Campus AI Assistant</b> is an AI-powered college support platform developed as an <b>AI & Data Science final-year project</b>. It helps students quickly access important college information through a simple conversational interface.</div>""",
+        unsafe_allow_html=True
     )
-
-    st.markdown("### 📚 Supported Areas")
 
     st.markdown(
-        """
-        - 📚 Courses and Departments
-        - 💰 Fees and Scholarships
-        - 📝 Admissions
-        - 📅 Attendance and Examinations
-        - 🏠 Hostel and Transport
-        - 💼 Placements
-        - 🎯 College Information
-        """
+        """<div class="about-section">
+<div class="about-heading">📚 Supported Areas</div>
+<div class="about-list">
+<div>📚 <b>Courses and Departments</b></div>
+<div>💰 <b>Fees and Scholarships</b></div>
+<div>📝 <b>Admissions</b></div>
+<div>📅 <b>Attendance and Examinations</b></div>
+<div>🏠 <b>Hostel and Transport</b></div>
+<div>💼 <b>Placements</b></div>
+<div>🎯 <b>College Information</b></div>
+</div>
+</div>""",
+        unsafe_allow_html=True
     )
-
-    st.markdown("### 🚨 Student Early Warning System")
-
-    st.write(
-        "The Student Risk Dashboard analyses available "
-        "student data and helps identify students who "
-        "may require academic mentoring."
-    )
-
-    st.markdown("### 🛠️ Technologies Used")
 
     st.markdown(
-        """
-        **Programming:** Python
-
-        **Frontend:** Streamlit
-
-        **NLP:** TF-IDF and Cosine Similarity
-
-        **Machine Learning:** Scikit-learn
-
-        **Data Processing:** Pandas
-
-        **Model Storage:** Joblib
-        """
+        """<div class="about-section">
+<div class="about-heading">🚨 Student Early Warning System</div>
+<div class="about-text">The <b>Student Risk Dashboard</b> analyses available student data and helps identify students who may require academic mentoring.</div>
+</div>""",
+        unsafe_allow_html=True
     )
 
-    st.divider()
+    st.markdown(
+        """<div class="about-section">
+<div class="about-heading">🛠️ Technologies Used</div>
+<div class="tech-grid">
+<div class="tech-card"><div class="tech-icon">🐍</div><div><div class="tech-name">Programming</div><div class="tech-value">Python</div></div></div>
+<div class="tech-card"><div class="tech-icon">🖥️</div><div><div class="tech-name">Frontend</div><div class="tech-value">Streamlit</div></div></div>
+<div class="tech-card"><div class="tech-icon">🧠</div><div><div class="tech-name">NLP</div><div class="tech-value">TF-IDF &amp; Cosine Similarity</div></div></div>
+<div class="tech-card"><div class="tech-icon">🤖</div><div><div class="tech-name">Machine Learning</div><div class="tech-value">Scikit-learn</div></div></div>
+<div class="tech-card"><div class="tech-icon">📊</div><div><div class="tech-name">Data Processing</div><div class="tech-value">Pandas</div></div></div>
+<div class="tech-card"><div class="tech-icon">💾</div><div><div class="tech-name">Model Storage</div><div class="tech-value">Joblib</div></div></div>
+</div>
+</div>""",
+        unsafe_allow_html=True
+    )
 
-    st.caption(
-        "V.S.B Engineering College • Campus AI Assistant • AI & DS Final Year Project"
+    st.markdown(
+        """<div class="about-footer"><b>V.S.B Engineering College</b><br>Campus AI Assistant • AI &amp; DS Final Year Project</div>""",
+        unsafe_allow_html=True
     )
