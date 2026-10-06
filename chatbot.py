@@ -326,6 +326,8 @@ Students should confirm the latest eligibility requirements with the college adm
             "vsb college courses",
             "college course",
             "college courses",
+            "clg course",
+            "clg courses",
             "course in vsb",
             "courses in vsb",
         ]
