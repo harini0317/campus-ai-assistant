@@ -9,7 +9,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 KB_DIR = os.path.join(BASE_DIR, "knowledge_base")
 LOG_DIR = os.path.join(BASE_DIR, "logs")
 
@@ -38,7 +37,10 @@ class CollegeBot:
                 ngram_range=(1, 2),
                 stop_words="english"
             )
-            self.matrix = self.vectorizer.fit_transform(self.documents)
+
+            self.matrix = self.vectorizer.fit_transform(
+                self.documents
+            )
         else:
             self.vectorizer = None
             self.matrix = None
@@ -49,7 +51,11 @@ class CollegeBot:
                 continue
 
             try:
-                with open(file_path, "r", encoding="utf-8") as file:
+                with open(
+                    file_path,
+                    "r",
+                    encoding="utf-8"
+                ) as file:
                     text = file.read()
 
                 chunks = self._make_chunks(text)
@@ -301,6 +307,51 @@ For the latest admission information, students should confirm the current detail
 Admission is subject to the current State Government / TNEA rules and applicable reservation norms.
 
 Students should confirm the latest eligibility requirements with the college admission office."""
+
+    def _is_college_details_question(self, question):
+        q = self._norm(question)
+        q = re.sub(r"\s+", " ", q).strip()
+
+        patterns = [
+            "clg details",
+            "clg detail",
+            "college details",
+            "college detail",
+            "college information",
+            "college info",
+            "clg information",
+            "clg info",
+            "vsb details",
+            "vsb detail",
+            "vsb information",
+            "vsb info",
+            "about college",
+            "about vsb",
+            "college pathi",
+            "clg pathi",
+            "college about",
+        ]
+
+        return any(pattern in q for pattern in patterns)
+
+    def _get_college_details_answer(self):
+        return """V.S.B Engineering College is an engineering institution located in Karur, Tamil Nadu.
+
+College Details:
+
+• Name: V.S.B Engineering College
+
+• Location: Karur, Tamil Nadu
+
+• Established: 2002
+
+• Institution Type: Engineering College
+
+• Current Undergraduate Engineering Programs: 12
+
+• Academic Project: Campus AI – A Smart College Assistant Using NLP and Student Risk Prediction
+
+For the latest college information, students should confirm current details with the college."""
 
     def _is_course_question(self, question):
         q = self._norm(question)
@@ -681,9 +732,13 @@ Students should check the official college communication for the latest examinat
                 self.matrix
             )[0]
 
-            best_index = int(np.argmax(similarities))
+            best_index = int(
+                np.argmax(similarities)
+            )
 
-            score = float(similarities[best_index])
+            score = float(
+                similarities[best_index]
+            )
 
             if score <= 0:
                 return None, None, 0.0
@@ -759,8 +814,28 @@ Students should check the official college communication for the latest examinat
 
         question = question.strip()
 
-        if self._is_fee_question(question):
+        if self._is_college_details_question(question):
+            answer = self._get_college_details_answer()
 
+            self._log(
+                question,
+                1.0,
+                "admissions.txt"
+            )
+
+            return {
+                "answer": answer,
+                "confidence": 1.0,
+                "hits": [
+                    (
+                        answer,
+                        "admissions.txt",
+                        1.0
+                    )
+                ]
+            }
+
+        if self._is_fee_question(question):
             answer = self._get_fee_answer()
 
             self._log(
@@ -782,7 +857,6 @@ Students should check the official college communication for the latest examinat
             }
 
         if self._is_course_count_question(question):
-
             answer = self._get_course_count_answer()
 
             self._log(
@@ -804,7 +878,6 @@ Students should check the official college communication for the latest examinat
             }
 
         if self._is_admission_eligibility_question(question):
-
             answer = self._get_admission_eligibility_answer()
 
             self._log(
@@ -826,7 +899,6 @@ Students should check the official college communication for the latest examinat
             }
 
         if self._is_admission_process_question(question):
-
             answer = self._get_admission_process_answer()
 
             self._log(
@@ -848,7 +920,6 @@ Students should check the official college communication for the latest examinat
             }
 
         if self._is_course_question(question):
-
             answer = self._get_course_answer()
 
             self._log(
@@ -870,7 +941,6 @@ Students should check the official college communication for the latest examinat
             }
 
         if self._is_hostel_question(question):
-
             answer = self._get_hostel_answer()
 
             self._log(
@@ -892,7 +962,6 @@ Students should check the official college communication for the latest examinat
             }
 
         if self._is_internship_question(question):
-
             answer = self._get_internship_answer()
 
             self._log(
@@ -914,7 +983,6 @@ Students should check the official college communication for the latest examinat
             }
 
         if self._is_placement_question(question):
-
             answer = self._get_placement_answer()
 
             self._log(
@@ -936,7 +1004,6 @@ Students should check the official college communication for the latest examinat
             }
 
         if self._is_attendance_question(question):
-
             answer = self._get_attendance_answer()
 
             self._log(
@@ -958,7 +1025,6 @@ Students should check the official college communication for the latest examinat
             }
 
         if self._is_exam_question(question):
-
             answer = self._get_exam_answer()
 
             self._log(
@@ -982,27 +1048,23 @@ Students should check the official college communication for the latest examinat
         category = self._detect_category(question)
 
         if category:
-
             category_file = self.files.get(category)
 
             if (
                 category_file
                 and os.path.exists(category_file)
             ):
-
                 try:
                     with open(
                         category_file,
                         "r",
                         encoding="utf-8"
                     ) as file:
-
                         text = file.read()
 
                     chunks = self._make_chunks(text)
 
                     if chunks:
-
                         local_vectorizer = TfidfVectorizer(
                             lowercase=True,
                             ngram_range=(1, 2),
@@ -1045,7 +1107,6 @@ Students should check the official college communication for the latest examinat
                         )
 
                         if score > 0:
-
                             self._log(
                                 question,
                                 score,
@@ -1075,7 +1136,6 @@ Students should check the official college communication for the latest examinat
         )
 
         if answer:
-
             answer = self._clean_answer(answer)
 
             source_file = (
